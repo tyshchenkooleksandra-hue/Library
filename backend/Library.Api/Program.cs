@@ -1,3 +1,4 @@
+using Library.Api.Extensions;
 using Library.Api.Middlewares;
 using Library.DataAccess.Extensions;
 
@@ -17,6 +18,11 @@ if (!app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.ApplyMigrations();
 }
 
 app.UseHttpsRedirection();
