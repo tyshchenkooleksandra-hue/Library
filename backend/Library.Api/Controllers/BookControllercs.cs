@@ -1,11 +1,16 @@
-﻿
-using global::Library.DataAccess.Context;
+﻿using global::Library.DataAccess.Context;
 using global::Library.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Api.Controllers;
 
+/// <summary>
+/// Temporary controller used to test database connectivity 
+/// 
+/// Allows adding and retrieving books to verify that the Books table exists
+/// and Entity Framework is working correctly.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class BooksController : ControllerBase
