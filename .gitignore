@@ -5,3 +5,13 @@
 /backend/Library/.vs/Library
 /backend/Library/obj
 /backend/Library/bin/Debug/net8.0
+/backend/Library.Api/.vs/Library
+/backend/Library.Api/bin/Debug/net8.0
+/backend/Library.Api/obj
+/backend/Library.Business/obj
+/backend/Library.DataAccess/obj
+/backend/.vs/Library/FileContentIndex
+/backend/Library.Api/.vs/ProjectEvaluation
+/backend/Library.Business/bin/Debug/net8.0
+/backend/Library.DataAccess/bin/Debug/net8.0
+/backend/.vs/Library/v17
