@@ -36,7 +36,6 @@ jobs:
           name: dotnet-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-
   migrate:
     runs-on: windows-latest
     needs: build
@@ -49,6 +48,9 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Restore dependencies
+        run: dotnet restore backend/Library.Api/Library.Api.csproj
+
       - name: Install EF Core CLI
         run: dotnet tool install --global dotnet-ef
 
@@ -56,8 +58,7 @@ jobs:
         run: echo "$env:USERPROFILE\.dotnet\tools" >> $env:GITHUB_PATH
 
       - name: Apply EF migrations
-        run: |
-          dotnet ef database update --project backend/Library.DataAccess --startup-project backend/Library.Api --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
+        run:  dotnet ef database update --project backend/Library.DataAccess --startup-project backend/Library.Api --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
 
 
   deploy:
