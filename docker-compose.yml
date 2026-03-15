@@ -1,10 +1,10 @@
 version: '3.4'
 
 services:
+
   library.api:
-    image: ${DOCKER_REGISTRY-}libraryapi
     build:
-      context: .
+      context: ./backend
       dockerfile: Library.Api/Dockerfile
     ports:
       - "8080:8080"
@@ -14,16 +14,18 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=LibraryDb;User=sa;Password=Your_password123;TrustServerCertificate=True;
+
   frontend:
     build:
-      context: ../frontend
+      context: ./frontend/library
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: http://localhost:8080
+        REACT_APP_API_URL: http://library.api:8080
     ports:
       - "3000:80"
     depends_on:
       - library.api
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: library-db
