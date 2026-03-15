@@ -17,3 +17,5 @@
 /backend/.vs/Library/v17
 /.vs
 /backend/.vs/Library
+/backend/bin/Debug
+/backend/obj
