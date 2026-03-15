@@ -1,93 +1,89 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - library-api-test
 
 on:
-push:
-branches:
-- dev
-workflow_dispatch:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
-build:
-runs-on: windows-latest
-permissions:
-contents: read
+    steps:
+      - uses: actions/checkout@v4
 
-```
-steps:
-  - uses: actions/checkout@v4
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
 
-  - name: Set up .NET
-    uses: actions/setup-dotnet@v4
-    with:
-      dotnet-version: '8.x'
+      - name: Build with dotnet
+        run: dotnet build   backend/Library.Api/Library.Api.csproj  --configuration Release
 
-  - name: Build
-    run: dotnet build backend/Library.Api/Library.Api.csproj --configuration Release
+      - name: dotnet publish
+        run: dotnet publish backend/Library.Api/Library.Api.csproj  -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-  - name: Publish
-    run: dotnet publish backend/Library.Api/Library.Api.csproj -c Release -o "${{ env.DOTNET_ROOT }}/myapp"
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+          
+      - name: Apply EF migrations
+        run: | 
+          dotnet ef database update \ --project backend/Library.DataAccess \ --startup-project backend/Library.Api \ --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
+  migrate:
+    runs-on: windows-latest
+    needs: build
+  
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+  
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+  
+      - name: Add tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+  
+      - name: Apply EF migrations
+        run: |
+          dotnet ef database update \
+            --project backend/Library.DataAccess \
+            --startup-project backend/Library.Api \
+            --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"  
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
-  - name: Upload artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: .net-app
-      path: ${{ env.DOTNET_ROOT }}/myapp
-      overwrite: true
-```
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E05F766B2A9543279A10CC074F2082EE }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B03955CF130E4FE09390CE8357201F38 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5337BEE7604E482289940AB7B4D0EA08 }}
 
-migrate:
-runs-on: windows-latest
-needs: build
-
-```
-steps:
-  - uses: actions/checkout@v4
-
-  - name: Set up .NET
-    uses: actions/setup-dotnet@v4
-    with:
-      dotnet-version: '8.x'
-
-  - name: Install EF Core CLI
-    run: dotnet tool install --global dotnet-ef
-
-  - name: Add tools to PATH
-    run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-  - name: Apply EF migrations
-    run: |
-      dotnet ef database update \
-        --project backend/Library.DataAccess \
-        --startup-project backend/Library.Api \
-        --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
-```
-
-deploy:
-runs-on: windows-latest
-needs: migrate
-permissions:
-id-token: write
-contents: read
-
-```
-steps:
-  - name: Download artifact
-    uses: actions/download-artifact@v4
-    with:
-      name: .net-app
-
-  - name: Login to Azure
-    uses: azure/login@v2
-    with:
-      client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E05F766B2A9543279A10CC074F2082EE }}
-      tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B03955CF130E4FE09390CE8357201F38 }}
-      subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5337BEE7604E482289940AB7B4D0EA08 }}
-
-  - name: Deploy to Azure Web App
-    uses: azure/webapps-deploy@v3
-    with:
-      app-name: 'library-api-test'
-      slot-name: 'Production'
-      package: .
-```
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'library-api-test'
+          slot-name: 'Production'
+          package: .
+          
