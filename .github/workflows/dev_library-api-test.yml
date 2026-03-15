@@ -35,12 +35,9 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
           
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-          overwrite: true
+      - name: Apply EF migrations
+        run: | 
+          dotnet ef database update \ --project backend/Library.DataAccess \ --startup-project backend/Library.Api \ --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
 
   deploy:
     runs-on: windows-latest
