@@ -16,7 +16,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=LibraryDb;User=sa;Password=Your_password123;TrustServerCertificate=True;
   frontend:
     build:
-      context: ../frontend/library
+      context: ../frontend
       dockerfile: Dockerfile
       args:
         REACT_APP_API_URL: http://localhost:8080
