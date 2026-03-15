@@ -17,7 +17,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend/library
+      context: ./frontend
       dockerfile: Dockerfile
       args:
         REACT_APP_API_URL: http://library.api:8080

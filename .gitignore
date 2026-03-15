@@ -18,4 +18,8 @@
 /.vs
 /backend/.vs/Library
 /backend/bin/Debug
-/backend/obj
+/backend/obj/Debug
+/backend/obj/Docker/library.api
+/backend/obj/Docker/obj/Docker
+/backend/obj/Docker
+/frontend/node_modules
