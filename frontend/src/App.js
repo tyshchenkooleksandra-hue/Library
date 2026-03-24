@@ -1,30 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import "./App.css";
 
 function App() {
-  const [books, setBooks] = useState([]);
-
-  useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_URL;
-console.log(process.env.REACT_APP_API_URL);
-    fetch(`${API_URL}/api/books`)
-      .then(async res => {
-        const text = await res.text();
-        console.log(text); 
-        return JSON.parse(text);
-      })
-      .then(data => setBooks(data))
-      .catch(err => console.error(err));
-  }, []);
+  const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>Books</h1>
+    <div className="container">
+      {isLogin ? <Login /> : <Register />}
 
-      {books.map(book => (
-        <div key={book.id}>
-          {book.title}
-        </div>
-      ))}
+      <button className="switch-btn" onClick={() => setIsLogin(!isLogin)}>
+        {isLogin ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
+      </button>
     </div>
   );
 }
