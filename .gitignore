@@ -23,3 +23,5 @@
 /backend/obj/Docker/obj/Docker
 /backend/obj/Docker
 /frontend/node_modules
+/backend/.vs/ProjectEvaluation
+/backend/obj
