@@ -7,6 +7,5 @@ namespace Library.Business.Interfaces
     {
         Task<IdentityResult> RegisterAsync(RegisterRequest model);
         Task<LoginResponse?> LoginAsync(LoginRequest model);
-        Task<LoginResponse?> RefreshTokenAsync(TokenRequest model);
     }
 }

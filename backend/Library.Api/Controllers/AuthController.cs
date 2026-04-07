@@ -40,18 +40,5 @@ namespace Library.Api.Controllers
 
             return Ok(response);
         }
-
-        [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] TokenRequest model)
-        {
-            var response = await _authService.RefreshTokenAsync(model);
-
-            if (response == null)
-            {
-                return BadRequest(new { message = "Invalid access token or refresh token." });
-            }
-
-            return Ok(response);
-        }
     }
 }
