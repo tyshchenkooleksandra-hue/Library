@@ -1,3 +1,6 @@
+Use the following format:
+[EPIC] Short description
+
 ## 🧩 Description
 What was done in this PR?
 
