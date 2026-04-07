@@ -7,7 +7,6 @@ What was done in this PR?
 ## 🔗 Related Issue
 Closes #
 
-
 ## 📸 Screenshots (if applicable)
 
 ## ✅ Checklist
