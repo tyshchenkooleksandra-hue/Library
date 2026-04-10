@@ -1,40 +1,72 @@
-﻿using global::Library.DataAccess.Context;
-using global::Library.DataAccess.Entities;
+﻿using Library.Business.DTOs.Books;
+using Library.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace Library.Api.Controllers;
-
-/// <summary>
-/// Temporary controller used to test database connectivity 
-/// 
-/// Allows adding and retrieving books to verify that the Books table exists
-/// and Entity Framework is working correctly.
-/// </summary>
-[ApiController]
-[Route("api/[controller]")]
-public class BooksController : ControllerBase
+namespace Library.Api.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public BooksController(ApplicationDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BooksController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly IBookService _bookService;
 
-    [HttpGet]
-    public async Task<IActionResult> GetBooks()
-    {
-        var books = await _context.Books.ToListAsync();
-        return Ok(books);
-    }
+        public BooksController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> AddBook([FromBody] Book book)
-    {
-        _context.Books.Add(book);
-        await _context.SaveChangesAsync();
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int limit = 10)
+        {
+            var books = await _bookService.GetAllBooksAsync(page, limit);
+            return Ok(books);
+        }
 
-        return Ok(book);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var book = await _bookService.GetBookByIdAsync(id);
+            if (book == null) return NotFound();
+            return Ok(book);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
+        {
+            await _bookService.CreateBookAsync(dto);
+            return Ok(new { message = "Book created successfully" });
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] CreateBookDto dto)
+        {
+            await _bookService.UpdateBookAsync(id, dto);
+            return Ok(new { message = "Book updated successfully" });
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _bookService.DeleteBookAsync(id);
+            return NoContent();
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? title, [FromQuery] string? author, [FromQuery] int? genreId)
+        {
+            var result = await _bookService.SearchBooksAsync(title, author, genreId);
+            return Ok(result);
+        }
+
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailable()
+        {
+            var result = await _bookService.GetAvailableBooksAsync();
+            return Ok(result);
+        }
     }
 }
