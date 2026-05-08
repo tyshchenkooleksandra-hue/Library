@@ -5,18 +5,19 @@ import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ShopPage from './pages/client/ShopPage';
+import CartPage from './pages/client/CartPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
 function App() {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [cart, setCart] = useState([]);   
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const savedUsers = localStorage.getItem('bookstore_users');
-
     if (savedUsers) {
       setUsers(JSON.parse(savedUsers));
     } else {
@@ -45,22 +46,20 @@ function App() {
         id: foundUser.id,
         email: foundUser.email,
         name: foundUser.name || foundUser.email.split('@')[0],
-        role: foundUser.role
+        role: foundUser.role,
       });
 
-      alert(` Вітаємо, ${foundUser.name || foundUser.email}!`);
+      alert(`Вітаємо, ${foundUser.name || foundUser.email}!`);
 
       if (foundUser.role === 'admin') {
         navigate('/admindashboard');
       } else {
         navigate('/shoppage');
       }
-
     } else {
-      alert(' Неправильний email або пароль!');
+      alert('Неправильний email або пароль!');
     }
   };
-
 
   const handleRegister = newUserData => {
     const existingUser = users.find(
@@ -77,26 +76,24 @@ function App() {
       name: newUserData.name,
       email: newUserData.email,
       password: newUserData.password,
-      role: 'client'
+      role: 'client',
     };
 
     setUsers(prev => [...prev, newUser]);
-    alert(' Реєстрація успішна! Тепер увійдіть у акаунт.');
-
+    alert('Реєстрація успішна! Тепер увійдіть у акаунт.');
     navigate('/login');
   };
 
   const handleLogout = () => {
     setUser(null);
+    setCart([]);
     navigate('/login');
   };
 
   return (
     <Routes>
-      {/* Redirect "/" → "/shoppage" */}
       <Route path="/" element={<Navigate to="/shoppage" replace />} />
 
-      {/* Admin Dashboard */}
       <Route
         path="/admindashboard"
         element={
@@ -106,29 +103,33 @@ function App() {
         }
       />
 
-      {/* Shop Page */}
       <Route
         path="/shoppage"
         element={
           <ShopPage
             user={user}
+            cart={cart}
+            setCart={setCart}
             onLogout={handleLogout}
             onOpenLogin={() => navigate('/login')}
           />
         }
       />
 
-      {/* Login */}
       <Route
-        path="/login"
-        element={<LoginPage onLogin={handleLogin} />}
+        path="/cart"
+        element={
+          <CartPage
+            cart={cart}
+            setCart={setCart}
+            user={user}
+            onBack={() => navigate('/shoppage')}
+          />
+        }
       />
 
-      {/* Register */}
-      <Route
-        path="/register"
-        element={<RegisterPage onRegister={handleRegister} />}
-      />
+      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+      <Route path="/register" element={<RegisterPage onRegister={handleRegister} />} />
     </Routes>
   );
 }
