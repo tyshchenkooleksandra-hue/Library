@@ -1,20 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
 
 namespace Library.Api.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    private readonly ILogger<
+        ExceptionHandlingMiddleware> _logger;
+
+    public ExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(
+        HttpContext context)
     {
         try
         {
@@ -22,19 +26,51 @@ public class ExceptionHandlingMiddleware
         }
         catch (ValidationException ex)
         {
-            await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest);
+            await HandleValidationExceptionAsync(context, ex);
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex, StatusCodes.Status500InternalServerError);
+            await HandleInternalExceptionAsync(
+                context,
+                ex
+            );
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception, int statusCode)
+    private async Task HandleValidationExceptionAsync(HttpContext context, Exception exception)
     {
-        context.Response.StatusCode = statusCode;
-        context.Response.ContentType = "text/plain";
-        await context.Response.WriteAsync(exception.Message);
-        _logger.LogError(exception, exception.Message);
+        context.Response.StatusCode =
+            StatusCodes.Status400BadRequest;
+
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsJsonAsync(
+            new
+            {
+                message = exception.Message
+            }
+        );
+
+        _logger.LogWarning(exception, exception.Message);
+    }
+
+    private async Task HandleInternalExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsJsonAsync(
+            new
+            {
+                message =
+                    "Internal server error."
+            }
+        );
+
+        _logger.LogError(
+            exception,
+            exception.Message
+        );
     }
 }

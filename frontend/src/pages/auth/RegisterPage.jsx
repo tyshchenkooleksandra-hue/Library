@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import './RegisterPage.css';
 
-import { register } from '../../../services/authService';
+import { register } from '../../services/authService';
 
 function RegisterPage() {
 
