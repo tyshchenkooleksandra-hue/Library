@@ -4,16 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.DataAccess.Entities
+namespace Library.Business.DTOs.Books
 {
-    public class Book
+    public class BookDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public int GenreId { get; set; }
-        public Genre Genre { get; set; } = null!;
-        public ICollection<BookCopy> BookCopies { get; set; } = new List<BookCopy>();
+        public string GenreName { get; set; } = string.Empty;
+        public bool IsAvailable { get; set; }
     }
 }
