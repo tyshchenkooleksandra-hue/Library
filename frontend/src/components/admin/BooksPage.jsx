@@ -1,24 +1,24 @@
-
 import React, { useState } from 'react';
 import BookForm from './BookForm';
+import BookPreviewModal from '../client/BookPreviewModal';
 import { initialBooks } from '../../data/mockData';
 
-const BooksPage = ({ 
-  isClientMode = false, 
-  onAddToCart, 
-  isLoggedIn = false, 
+const BooksPage = ({
+  isClientMode = false,
+  onAddToCart,
+  isLoggedIn = false,
   isAdmin = false,
-  onOpenLogin 
+  onOpenLogin
 }) => {
-  
+
   const [books, setBooks] = useState(initialBooks);
   const [showForm, setShowForm] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [previewBook, setPreviewBook] = useState(null);
 
   const filteredBooks = books.filter(book => {
     if (!searchTerm.trim()) return true;
-    
     const term = searchTerm.toLowerCase().trim();
     return (
       book.title.toLowerCase().includes(term) ||
@@ -38,7 +38,6 @@ const BooksPage = ({
       description: newBookData.description,
       image: processedImage || (file ? URL.createObjectURL(file) : 'https://picsum.photos/id/1005/300/400')
     };
-
     setBooks(prev => [...prev, bookWithId]);
     setShowForm(false);
     setEditingBook(null);
@@ -85,13 +84,11 @@ const BooksPage = ({
 
   const handleAddBookClick = () => {
     if (isClientMode) return;
-
     if (!isLoggedIn || !isAdmin) {
       alert(" Для додавання та редагування книг потрібно увійти як адміністратор!");
       onOpenLogin?.();
       return;
     }
-
     setEditingBook(null);
     setShowForm(true);
   };
@@ -100,10 +97,9 @@ const BooksPage = ({
     <div className="max-w-7xl mx-auto py-8 px-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
         <div>
-          
           <p className="text-gray-500 mt-1">
-            {isClientMode 
-              ? `${filteredBooks.length} книг у каталозі` 
+            {isClientMode
+              ? `${filteredBooks.length} книг у каталозі`
               : "Керуйте асортиментом вашої книгарні"}
           </p>
         </div>
@@ -141,17 +137,17 @@ const BooksPage = ({
               <th className="w-28">Ціна</th>
               <th className="w-32">На складі</th>
               <th>Опис</th>
-              <th className="w-40 text-right">Дії</th>
+              <th className="w-52 text-right">Дії</th>
             </tr>
           </thead>
           <tbody>
             {filteredBooks.map(book => (
               <tr key={book.id} className="group hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-6">
-                  <img 
-                    src={book.image} 
-                    alt={book.title} 
-                    className="book-cover w-20 h-28 object-cover rounded-xl shadow-sm" 
+                  <img
+                    src={book.image}
+                    alt={book.title}
+                    className="book-cover w-20 h-28 object-cover rounded-xl shadow-sm"
                   />
                 </td>
                 <td className="px-6 py-6 font-semibold text-gray-900">{book.title}</td>
@@ -167,14 +163,23 @@ const BooksPage = ({
                 </td>
                 <td className="px-6 py-6 text-right">
                   {isClientMode ? (
-                    <button
-                      onClick={() => handleAddToCart(book)}
-                      className="btn-primary px-7 py-3 text-sm font-medium hover:scale-105 transition-transform"
-                    >
-                      + В кошик
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <button onClick={() => setPreviewBook(book)} className="btn-info">
+                        ℹ️ Інфо
+                      </button>
+                      <button
+                        onClick={() => handleAddToCart(book)}
+                        className="btn-primary"
+                        style={{ marginTop: 0, padding: '8px 18px', fontSize: '14px' }}
+                      >
+                        + В кошик
+                      </button>
+                    </div>
                   ) : (
-                    <div className="flex gap-3 justify-end">
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <button onClick={() => setPreviewBook(book)} className="btn-info">
+                        ℹ️ Інфо
+                      </button>
                       <button
                         onClick={() => handleEdit(book)}
                         className="button-all"
@@ -199,12 +204,19 @@ const BooksPage = ({
       {filteredBooks.length === 0 && (
         <div className="text-center py-20">
           <p className="text-gray-400 text-xl">
-            {searchTerm 
-              ? `Книг за запитом "${searchTerm}" не знайдено.` 
+            {searchTerm
+              ? `Книг за запитом "${searchTerm}" не знайдено.`
               : 'Список книг порожній.'}
           </p>
         </div>
       )}
+
+      <BookPreviewModal
+        book={previewBook}
+        onClose={() => setPreviewBook(null)}
+        onAddToCart={handleAddToCart}
+        isClientMode={isClientMode}
+      />
 
       {showForm && (
         <BookForm
