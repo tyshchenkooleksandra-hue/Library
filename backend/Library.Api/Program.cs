@@ -9,6 +9,7 @@ using Library.DataAccess.Context;
 using Library.DataAccess.Entities;
 using Library.Business.Interfaces;
 using Library.Business.Services;
+using Library.Business.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
     };
 });
+
+builder.Services.AddBusinessServices(builder.Configuration);
 
 var app = builder.Build();
 
