@@ -1,12 +1,25 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate
+} from 'react-router-dom';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ShopPage from './pages/client/ShopPage';
+
 import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
+
+import RegisterPage from './pages/auth/Register/RegisterPage';
+
+import CheckEmailPage from './pages/auth/CheckEmailPage';
+
+import ConfirmEmailPage from './pages/auth/ConfirmEmailPage';
+
+import SubscriptionPage from './pages/subscription/SubscriptionPage';
 
 function App() {
 
@@ -14,12 +27,14 @@ function App() {
 
   const [user, setUser] = useState(null);
 
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
 
-    const savedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const savedUser =
+      localStorage.getItem('user');
 
-    if (savedUser && token) {
+    if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
 
@@ -28,7 +43,6 @@ function App() {
   const handleLogout = () => {
 
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
 
     setUser(null);
 
@@ -36,9 +50,8 @@ function App() {
   };
 
   return (
-    <Routes>
 
-      {/* Default redirect */}
+    <Routes>
 
       <Route
         path="/"
@@ -49,31 +62,58 @@ function App() {
         }
       />
 
-      {/* Login */}
-
       <Route
         path="/login"
         element={
           user
             ? <Navigate to="/shoppage" replace />
-            : <LoginPage setUser={setUser} />
+            : (
+              <LoginPage
+                setUser={setUser}
+              />
+            )
         }
       />
-      ```
-
-
-      {/* Register */}
 
       <Route
         path="/register"
         element={
           user
             ? <Navigate to="/shoppage" replace />
-            : <RegisterPage />
+            : (
+              <RegisterPage
+                setUser={setUser}
+              />
+            )
         }
       />
 
-      {/* Shop Page */}
+      <Route
+        path="/check-email"
+        element={<CheckEmailPage />}
+      />
+
+      <Route
+        path="/confirmemail"
+        element={
+          <ConfirmEmailPage
+            setUser={setUser}
+          />
+        }
+      />
+
+      <Route
+        path="/subscription"
+        element={
+          user
+            ? (
+              <SubscriptionPage
+                user={user}
+              />
+            )
+            : <Navigate to="/login" replace />
+        }
+      />
 
       <Route
         path="/shoppage"
@@ -82,14 +122,18 @@ function App() {
             ? (
               <ShopPage
                 user={user}
+                cart={cart}
+                setCart={setCart}
                 onLogout={handleLogout}
+                onOpenLogin={() =>
+                  navigate('/login')
+                }
               />
             )
             : <Navigate to="/login" replace />
         }
       />
 
-      {/* Admin Dashboard */}
 
       <Route
         path="/admindashboard"

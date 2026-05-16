@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { register } from '../../services/authService';
+import './RegisterPage.css';
+
+import { register } from '../../../services/authService';
 
 function RegisterPage() {
 
@@ -36,11 +38,15 @@ function RegisterPage() {
 
       await register(form);
 
-      setSuccess('Registration successful!');
+      setSuccess(
+        'Registration successful! Please confirm your email.'
+      );
 
       setTimeout(() => {
-        navigate('/login');
-      }, 1200);
+
+        navigate('/check-email');
+
+      }, 1500);
 
     } catch (error) {
 
@@ -97,24 +103,28 @@ function RegisterPage() {
           Register
         </button>
 
-        {error && (
-          <div className="auth-error">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="auth-success">
-            {success}
-          </div>
-        )}
-
       </form>
+
+      {error && (
+        <div className="auth-error">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="auth-success">
+          {success}
+        </div>
+      )}
 
       <p>
         Already have an account?{' '}
+
         <span
-          style={{ cursor: 'pointer', color: 'blue' }}
+          style={{
+            cursor: 'pointer',
+            color: 'blue'
+          }}
           onClick={() => navigate('/login')}
         >
           Login
