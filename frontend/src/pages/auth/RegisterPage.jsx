@@ -1,38 +1,79 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function RegisterPage({ onRegister }) {
+import { register } from '../../services/authService';
+
+function RegisterPage() {
+
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: ''
   });
 
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const handleChange = e => {
+
     setForm({
       ...form,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
+
     e.preventDefault();
-    onRegister(form);
+
+    setError('');
+    setSuccess('');
+
+    try {
+
+      await register(form);
+
+      setSuccess('Registration successful!');
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 1200);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setError(error.message);
+    }
   };
 
   return (
     <div className="auth-page">
       <h2>Реєстрація</h2>
 
+      <h2>Register</h2>
+
       <form onSubmit={handleSubmit}>
+
         <input
-          name="name"
+          name="firstName"
           type="text"
-          placeholder="Ім'я"
-          value={form.name}
+          placeholder="First Name"
+          value={form.firstName}
           onChange={handleChange}
+          required
+        />
+
+        <input
+          name="lastName"
+          type="text"
+          placeholder="Last Name"
+          value={form.lastName}
+          onChange={handleChange}
+          required
         />
 
         <input
@@ -41,25 +82,46 @@ function RegisterPage({ onRegister }) {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          required
         />
 
         <input
           name="password"
           type="password"
-          placeholder="Пароль"
+          placeholder="Password"
           value={form.password}
           onChange={handleChange}
+          required
         />
 
-        <button type="submit">Зареєструватися</button>
+        <button type="submit">
+          Register
+        </button>
+
+        {error && (
+          <div className="auth-error">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="auth-success">
+            {success}
+          </div>
+        )}
+
       </form>
 
       <p>
-        Вже є акаунт?{' '}
-        <span onClick={() => navigate('/login')}>
-          Увійти
+        Already have an account?{' '}
+        <span
+          style={{ cursor: 'pointer', color: 'blue' }}
+          onClick={() => navigate('/login')}
+        >
+          Login
         </span>
       </p>
+
     </div>
   );
 }
