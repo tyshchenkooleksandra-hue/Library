@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import './App.css';
 
 import {
@@ -8,26 +9,42 @@ import {
   Navigate
 } from 'react-router-dom';
 
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ShopPage from './pages/client/ShopPage';
+import AdminDashboard
+  from './pages/admin/AdminDashboard';
 
-import LoginPage from './pages/auth/LoginPage';
+import ShopPage
+  from './pages/client/ShopPage';
 
-import RegisterPage from './pages/auth/Register/RegisterPage';
+import LoginPage
+  from './pages/auth/LoginPage';
 
-import CheckEmailPage from './pages/auth/CheckEmailPage';
+import RegisterPage
+  from './pages/auth/RegisterPage';
 
-import ConfirmEmailPage from './pages/auth/ConfirmEmailPage';
+import CheckEmailPage
+  from './pages/auth/CheckEmailPage';
 
-import SubscriptionPage from './pages/subscription/SubscriptionPage';
+import ConfirmEmailPage
+  from './pages/auth/ConfirmEmailPage';
+
+import SubscriptionPage
+  from './pages/subscription/SubscriptionPage/SubscriptionPage';
+
+import SubscriptionSuccessPage
+  from './pages/subscription/SubscriptionSuccessPage/SubscriptionSuccessPage';
 
 function App() {
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] =
+    useState(null);
 
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
 
@@ -35,8 +52,13 @@ function App() {
       localStorage.getItem('user');
 
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+
+      setUser(
+        JSON.parse(savedUser)
+      );
     }
+
+    setLoading(false);
 
   }, []);
 
@@ -49,6 +71,10 @@ function App() {
     navigate('/login');
   };
 
+  if (loading) {
+    return null;
+  }
+
   return (
 
     <Routes>
@@ -57,8 +83,18 @@ function App() {
         path="/"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
-            : <Navigate to="/login" replace />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
 
@@ -66,7 +102,12 @@ function App() {
         path="/login"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
             : (
               <LoginPage
                 setUser={setUser}
@@ -79,7 +120,12 @@ function App() {
         path="/register"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
             : (
               <RegisterPage
                 setUser={setUser}
@@ -90,7 +136,9 @@ function App() {
 
       <Route
         path="/check-email"
-        element={<CheckEmailPage />}
+        element={
+          <CheckEmailPage />
+        }
       />
 
       <Route
@@ -111,7 +159,28 @@ function App() {
                 user={user}
               />
             )
-            : <Navigate to="/login" replace />
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
+
+      <Route
+        path="/subscription-success"
+        element={
+          user
+            ? (
+              <SubscriptionSuccessPage />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
 
@@ -130,10 +199,14 @@ function App() {
                 }
               />
             )
-            : <Navigate to="/login" replace />
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
-
 
       <Route
         path="/admindashboard"
@@ -142,10 +215,17 @@ function App() {
             ? (
               <AdminDashboard
                 email={user?.email}
-                onLogout={handleLogout}
+                onLogout={
+                  handleLogout
+                }
               />
             )
-            : <Navigate to="/login" replace />
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
 
@@ -154,3 +234,4 @@ function App() {
 }
 
 export default App;
+

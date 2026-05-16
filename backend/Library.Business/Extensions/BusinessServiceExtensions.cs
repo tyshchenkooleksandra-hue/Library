@@ -15,6 +15,8 @@ public static class BusinessServiceExtensions
         services.AddScoped<IUrlHelperService, UrlHelperService>();
         services.AddScoped<IEmailService, EmailService>();
 
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
+
         services.Configure<EmailConfirmationSettings>(configuration.GetSection("EmailConfirmationSettings"));
 
         services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
