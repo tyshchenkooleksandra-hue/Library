@@ -1,31 +1,111 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import './App.css';
+
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ShopPage from './pages/client/ShopPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
 function App() {
-  const [books, setBooks] = useState([]);
+
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_URL;
-console.log(process.env.REACT_APP_API_URL);
-    fetch(`${API_URL}/api/books`)
-      .then(async res => {
-        const text = await res.text();
-        console.log(text); 
-        return JSON.parse(text);
-      })
-      .then(data => setBooks(data))
-      .catch(err => console.error(err));
+
+    const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+
+    if (savedUser && token) {
+      setUser(JSON.parse(savedUser));
+    }
+
   }, []);
 
-  return (
-    <div style={{ padding: "40px" }}>
-      <h1>Books</h1>
+  const handleLogout = () => {
 
-      {books.map(book => (
-        <div key={book.id}>
-          {book.title}
-        </div>
-      ))}
-    </div>
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
+    setUser(null);
+
+    navigate('/login');
+  };
+
+  return (
+    <Routes>
+
+      {/* Default redirect */}
+
+      <Route
+        path="/"
+        element={
+          user
+            ? <Navigate to="/shoppage" replace />
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      {/* Login */}
+
+      <Route
+        path="/login"
+        element={
+          user
+            ? <Navigate to="/shoppage" replace />
+            : <LoginPage setUser={setUser} />
+        }
+      />
+      ```
+
+
+      {/* Register */}
+
+      <Route
+        path="/register"
+        element={
+          user
+            ? <Navigate to="/shoppage" replace />
+            : <RegisterPage />
+        }
+      />
+
+      {/* Shop Page */}
+
+      <Route
+        path="/shoppage"
+        element={
+          user
+            ? (
+              <ShopPage
+                user={user}
+                onLogout={handleLogout}
+              />
+            )
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      {/* Admin Dashboard */}
+
+      <Route
+        path="/admindashboard"
+        element={
+          user?.role === 'admin'
+            ? (
+              <AdminDashboard
+                email={user?.email}
+                onLogout={handleLogout}
+              />
+            )
+            : <Navigate to="/login" replace />
+        }
+      />
+
+    </Routes>
   );
 }
 
