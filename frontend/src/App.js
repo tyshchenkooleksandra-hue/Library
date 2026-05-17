@@ -13,7 +13,7 @@ import AdminDashboard
   from './pages/admin/AdminDashboard';
 
 import ShopPage
-  from './pages/client/ShopPage/LibraryPage';
+  from './pages/client/LibraryPage/LibraryPage';
 
 import CartPage
   from './pages/client/CartPage';
