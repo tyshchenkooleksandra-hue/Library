@@ -14,14 +14,40 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Book> Books { get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<BookCopy> BookCopies { get; set; }
 
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
 
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
+    public DbSet<CartItem> CartItems { get; set; }
+
+    public DbSet<Reservation> Reservations
+    {
+        get;
+        set;
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<Book>(entity =>
+        {
+            entity.HasOne(b => b.Genre)
+                .WithMany(g => g.Books)
+                .HasForeignKey(b => b.GenreId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<BookCopy>(entity =>
+        {
+            entity.HasOne(bc => bc.Book)
+                .WithMany(b => b.BookCopies)
+                .HasForeignKey(bc => bc.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         builder.Entity<IdentityRole>().HasData(
             new IdentityRole
@@ -70,5 +96,29 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 PriorityDelivery = true
             }
         );
+
+        builder.Entity<CartItem>()
+            .HasOne(ci => ci.Book)
+            .WithMany()
+            .HasForeignKey(ci => ci.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CartItem>()
+            .HasOne(ci => ci.User)
+            .WithMany()
+            .HasForeignKey(ci => ci.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Reservation>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Reservation>()
+            .HasOne(r => r.Book)
+            .WithMany()
+            .HasForeignKey(r => r.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

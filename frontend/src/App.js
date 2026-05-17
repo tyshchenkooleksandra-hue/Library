@@ -12,8 +12,11 @@ import {
 import AdminDashboard
   from './pages/admin/AdminDashboard';
 
-import ShopPage
-  from './pages/client/ShopPage';
+import LibraryPage
+  from './pages/client/LibraryPage/LibraryPage';
+
+import CartPage
+  from './pages/client/CartPage';
 
 import LoginPage
   from './pages/auth/LoginPage';
@@ -185,17 +188,40 @@ function App() {
       />
 
       <Route
-        path="/shoppage"
+        path="/librarypage"
         element={
           user
             ? (
-              <ShopPage
+              <LibraryPage
                 user={user}
                 cart={cart}
                 setCart={setCart}
                 onLogout={handleLogout}
                 onOpenLogin={() =>
                   navigate('/login')
+                }
+              />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
+
+      <Route
+        path="/cart"
+        element={
+          user
+            ? (
+              <CartPage
+                cart={cart}
+                setCart={setCart}
+                user={user}
+                onBack={() =>
+                  navigate('/librarypage')
                 }
               />
             )
@@ -234,4 +260,3 @@ function App() {
 }
 
 export default App;
-

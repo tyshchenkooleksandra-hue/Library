@@ -1,57 +1,78 @@
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL =
+  process.env.REACT_APP_API_URL;
 
-export async function login(email, password) {
+export async function register(data) {
 
-  const response = await fetch(
-    `${API_URL}/api/Auth/login`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/api/auth/register`,
+      {
+        method: 'POST',
 
-  const data = await response.json();
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+
+        body: JSON.stringify(data)
+      }
+    );
 
   if (!response.ok) {
-    throw new Error(data.message || 'Login failed');
+
+    let errorData = null;
+
+    try {
+
+      errorData =
+        await response.json();
+
+    } catch {
+
+      errorData = null;
+    }
+
+    const error =
+      new Error(
+        'Registration failed'
+      );
+
+    error.data =
+      errorData;
+
+    throw error;
   }
 
-  return data;
+  return await response.json();
 }
 
-export async function register(form) {
+export async function login(data) {
 
-  const response = await fetch(
-    `${API_URL}/api/Auth/register`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(form)
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/api/auth/login`,
+      {
+        method: 'POST',
 
-  const data = await response.json();
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+
+        body: JSON.stringify(data)
+      }
+    );
+
+  const result =
+    await response.json();
 
   if (!response.ok) {
 
-    if (data.errors) {
-      const validationMessages = Object.values(data.errors)
-        .flat()
-        .join(', ');
-
-      throw new Error(validationMessages);
-    }
-
-    throw new Error(data.message || 'Registration failed');
+    throw new Error(
+      result.message ||
+      'Login failed'
+    );
   }
 
-  return data;
+  return result;
 }
