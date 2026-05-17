@@ -57,3 +57,14 @@ Implemented functionality:
 3. Create Pull Request
 4. Review and merge changes into development
 5. Deploy updated version through CI/CD pipeline
+
+---
+
+## 🔒 Branch Protection
+
+Protected branch strategy is configured for production stability:
+
+* `main` branch is protected from direct pushes
+* `development` branch is protected from direct pushes
+* Feature branches are used for isolated development
+* All changes are merged through Pull Requests and review process
