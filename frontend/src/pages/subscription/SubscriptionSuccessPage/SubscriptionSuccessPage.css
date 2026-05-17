@@ -1,0 +1,40 @@
+.subscription-success-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6f9;
+}
+
+.subscription-success-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  width: 400px;
+}
+
+.subscription-success-card h1 {
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.subscription-success-card p {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.subscription-success-card button {
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.subscription-success-card button:hover {
+  opacity: 0.9;
+}

@@ -1,17 +1,27 @@
 import { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 
-import { login } from '../../services/authService';
+import { jwtDecode } from 'jwt-decode';
+
+import { login }
+  from '../../services/authService';
 
 function LoginPage({ setUser }) {
 
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] =
+    useState('');
 
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [password, setPassword] =
+    useState('');
+
+  const [error, setError] =
+    useState('');
+
+  const [success, setSuccess] =
+    useState('');
 
   const handleSubmit = async e => {
 
@@ -22,19 +32,40 @@ function LoginPage({ setUser }) {
 
     try {
 
-      const data = await login(email, password);
+      const data =
+        await login(email, password);
 
-      localStorage.setItem('token', data.accessToken);
+      const decodedToken =
+        jwtDecode(data.accessToken);
 
-      setUser({
-        token: data.accessToken
-      });
+      const userData = {
+        email:
+          decodedToken[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+          ],
 
-      setSuccess('Login successful!');
+        id:
+          decodedToken[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+          ],
 
-      setTimeout(() => {
-        navigate('/shoppage');
-      }, 1000);
+        token:
+          data.accessToken
+      };
+
+      localStorage.setItem(
+        'token',
+        data.accessToken
+      );
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify(userData)
+      );
+
+      setUser(userData);
+
+
 
     } catch (error) {
 
@@ -55,7 +86,11 @@ function LoginPage({ setUser }) {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={e =>
+            setEmail(
+              e.target.value
+            )
+          }
           required
         />
 
@@ -63,7 +98,11 @@ function LoginPage({ setUser }) {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={e =>
+            setPassword(
+              e.target.value
+            )
+          }
           required
         />
 
@@ -87,12 +126,19 @@ function LoginPage({ setUser }) {
 
       <p>
         Don't have an account?{' '}
+
         <span
-          style={{ cursor: 'pointer', color: 'blue' }}
-          onClick={() => navigate('/register')}
+          style={{
+            cursor: 'pointer',
+            color: 'blue'
+          }}
+          onClick={() =>
+            navigate('/register')
+          }
         >
           Register
         </span>
+
       </p>
 
     </div>

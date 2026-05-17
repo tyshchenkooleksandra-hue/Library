@@ -2,43 +2,69 @@ using Microsoft.AspNetCore.Mvc;
 using Library.Business.Interfaces;
 using Library.Business.DTOs.Auth;
 
-namespace Library.Api.Controllers
+namespace Library.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+
+    public AuthController(
+        IAuthService authService)
     {
-        private readonly IAuthService _authService;
+        _authService = authService;
+    }
 
-        public AuthController(IAuthService authService)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest model)
+    {
+        var result = await _authService.RegisterAsync(model);
+
+        if (!result.Succeeded)
         {
-            _authService = authService;
+            return BadRequest(result.Errors);
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest model)
+        return Ok(new
         {
-            var result = await _authService.RegisterAsync(model);
+            message = "User registered successfully!"
+        });
+    }
 
-            if (!result.Succeeded)
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest model)
+    {
+        var response = await _authService.LoginAsync(model);
+
+        if (!response.Success)
+        {
+            return Unauthorized(new
             {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(new { message = "User registered successfully!" });
+                message = response.Message
+            });
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest model)
+        return Ok(response.Data);
+    }
+
+    [HttpGet("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail(string email, string token)
+    {
+        var result =
+            await _authService.ConfirmEmailAsync(email,token);
+
+        if (!result.Succeeded)
         {
-            var response = await _authService.LoginAsync(model);
-
-            if (response == null)
+            return BadRequest(new
             {
-                return Unauthorized(new { message = "Invalid email or password." });
-            }
-
-            return Ok(response);
+                message = "Invalid confirmation token."
+            });
         }
+
+        return Ok(new
+        {
+            message =  "Email confirmed successfully!"
+        });
     }
 }

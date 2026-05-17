@@ -1,79 +1,188 @@
 import { useState, useEffect } from 'react';
+
 import './App.css';
 
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate
+} from 'react-router-dom';
 
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ShopPage from './pages/client/ShopPage';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
+import AdminDashboard
+  from './pages/admin/AdminDashboard';
+
+import ShopPage
+  from './pages/client/ShopPage';
+
+import LoginPage
+  from './pages/auth/LoginPage';
+
+import RegisterPage
+  from './pages/auth/RegisterPage';
+
+import CheckEmailPage
+  from './pages/auth/CheckEmailPage';
+
+import ConfirmEmailPage
+  from './pages/auth/ConfirmEmailPage';
+
+import SubscriptionPage
+  from './pages/subscription/SubscriptionPage/SubscriptionPage';
+
+import SubscriptionSuccessPage
+  from './pages/subscription/SubscriptionSuccessPage/SubscriptionSuccessPage';
 
 function App() {
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] =
+    useState(null);
+
+  const [cart, setCart] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
 
-    const savedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const savedUser =
+      localStorage.getItem('user');
 
-    if (savedUser && token) {
-      setUser(JSON.parse(savedUser));
+    if (savedUser) {
+
+      setUser(
+        JSON.parse(savedUser)
+      );
     }
+
+    setLoading(false);
 
   }, []);
 
   const handleLogout = () => {
 
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
 
     setUser(null);
 
     navigate('/login');
   };
 
-  return (
-    <Routes>
+  if (loading) {
+    return null;
+  }
 
-      {/* Default redirect */}
+  return (
+
+    <Routes>
 
       <Route
         path="/"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
-            : <Navigate to="/login" replace />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
-
-      {/* Login */}
 
       <Route
         path="/login"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
-            : <LoginPage setUser={setUser} />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
+            : (
+              <LoginPage
+                setUser={setUser}
+              />
+            )
         }
       />
-      ```
-
-
-      {/* Register */}
 
       <Route
         path="/register"
         element={
           user
-            ? <Navigate to="/shoppage" replace />
-            : <RegisterPage />
+            ? (
+              <Navigate
+                to="/subscription"
+                replace
+              />
+            )
+            : (
+              <RegisterPage
+                setUser={setUser}
+              />
+            )
         }
       />
 
-      {/* Shop Page */}
+      <Route
+        path="/check-email"
+        element={
+          <CheckEmailPage />
+        }
+      />
+
+      <Route
+        path="/confirmemail"
+        element={
+          <ConfirmEmailPage
+            setUser={setUser}
+          />
+        }
+      />
+
+      <Route
+        path="/subscription"
+        element={
+          user
+            ? (
+              <SubscriptionPage
+                user={user}
+              />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
+
+      <Route
+        path="/subscription-success"
+        element={
+          user
+            ? (
+              <SubscriptionSuccessPage />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
 
       <Route
         path="/shoppage"
@@ -82,14 +191,22 @@ function App() {
             ? (
               <ShopPage
                 user={user}
+                cart={cart}
+                setCart={setCart}
                 onLogout={handleLogout}
+                onOpenLogin={() =>
+                  navigate('/login')
+                }
               />
             )
-            : <Navigate to="/login" replace />
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
-
-      {/* Admin Dashboard */}
 
       <Route
         path="/admindashboard"
@@ -98,10 +215,17 @@ function App() {
             ? (
               <AdminDashboard
                 email={user?.email}
-                onLogout={handleLogout}
+                onLogout={
+                  handleLogout
+                }
               />
             )
-            : <Navigate to="/login" replace />
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
         }
       />
     <Routes>
@@ -146,3 +270,4 @@ function App() {
 }
 
 export default App;
+
