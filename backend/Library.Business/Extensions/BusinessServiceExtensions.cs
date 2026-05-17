@@ -20,6 +20,8 @@ public static class BusinessServiceExtensions
         services.Configure<EmailConfirmationSettings>(configuration.GetSection("EmailConfirmationSettings"));
 
         services.AddScoped<IBookService, BookService>();
+        services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IReservationService, ReservationService>();
 
         services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
         return services;

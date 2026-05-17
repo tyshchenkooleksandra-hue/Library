@@ -21,6 +21,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
+    public DbSet<CartItem> CartItems { get; set; }
+
+    public DbSet<Reservation> Reservations
+    {
+        get;
+        set;
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -88,5 +96,29 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 PriorityDelivery = true
             }
         );
+
+        builder.Entity<CartItem>()
+            .HasOne(ci => ci.Book)
+            .WithMany()
+            .HasForeignKey(ci => ci.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CartItem>()
+            .HasOne(ci => ci.User)
+            .WithMany()
+            .HasForeignKey(ci => ci.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Reservation>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Reservation>()
+            .HasOne(r => r.Book)
+            .WithMany()
+            .HasForeignKey(r => r.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

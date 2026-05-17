@@ -4,7 +4,7 @@ export const users = [
   {
     id: 1,
     name: "Адміністратор",
-    email: "admin@bookshop.ua",
+    email: "admin@booklibrary.ua",
     password: "admin123",
     role: "admin"
   },
@@ -35,7 +35,7 @@ export const initialBooks = [
     price: 280,
     stock: 18,
     description: "Історична повість «Захар Беркут» Івана Франка переносить читача у XIII століття, коли українські землі зазнавали нападу монгольських орд. У центрі твору — громада тухольців, яка об’єднується для боротьби проти ворога. Головний герой, мудрий старійшина Захар Беркут, уособлює силу духу, єдність та патріотизм. Твір піднімає важливі питання колективної відповідальності, свободи та сили народу, який здатний перемогти навіть сильнішого ворога.",
-    image: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTrSomML2vebu9X6QE9p8EGbfjaK12rqoeTFJ0P6fp4NRn46Awu_Mp8TceJ7a1_2FLVyfY-EqhD62f0T5xGtbZLnu-sFY60pKFNSrtLhFD-&usqp=CAc"
+    image: "https://encrypted-tbn0.gstatic.com/libraryping?q=tbn:ANd9GcTrSomML2vebu9X6QE9p8EGbfjaK12rqoeTFJ0P6fp4NRn46Awu_Mp8TceJ7a1_2FLVyfY-EqhD62f0T5xGtbZLnu-sFY60pKFNSrtLhFD-&usqp=CAc"
   },
   {
     id: 3,

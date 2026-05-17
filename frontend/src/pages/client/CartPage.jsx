@@ -1,187 +1,463 @@
-import React, { useState } from 'react';
+import {
+  useEffect,
+  useState
+} from 'react';
 
-const CartPage = ({ cart, setCart, onBack, user }) => {
-  const [orderPlaced, setOrderPlaced] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [promoError, setPromoError] = useState('');
-  const [quantities, setQuantities] = useState(() => {
-    const init = {};
-    cart.forEach(item => { init[item.cartId] = 1; });
-    return init;
+import {
+  getCart
+} from '../../services/cartService';
+
+import {
+  confirmReservation
+} from '../../services/reservationService';
+
+import DefaultBookImage
+  from '../../assets/default-book.jpg';
+
+const CartPage = ({
+  user,
+  onBack
+}) => {
+
+  const [cart, setCart] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [borrowSuccess,
+    setBorrowSuccess] =
+      useState(false);
+
+  const [tooltip, setTooltip] =
+    useState({
+      show: false,
+      message: '',
+      type: 'success'
+    });
+
+  const [deliveryAddress,
+    setDeliveryAddress] =
+      useState('');
+
+  const [phoneNumber,
+    setPhoneNumber] =
+      useState('');
+
+  useEffect(() => {
+
+    const loadCart =
+      async () => {
+
+        try {
+
+          const data =
+            await getCart(
+              user.token
+            );
+
+          setCart(data);
+
+        } catch (error) {
+
+          console.error(error);
+
+        } finally {
+
+          setLoading(false);
+        }
+      };
+
+    loadCart();
+
+  }, [user]);
+
+  const removeFromCart =
+    cartId => {
+
+      setCart(prev =>
+        prev.filter(
+          item =>
+            item.id !== cartId
+        )
+      );
+
+      setTooltip({
+        show: true,
+        message:
+          'Book removed from reservation list',
+        type: 'success'
+      });
+
+      setTimeout(() => {
+
+        setTooltip({
+          show: false,
+          message: '',
+          type: 'success'
+        });
+
+      }, 3000);
+    };
+
+  const handleBorrow =
+    async () => {
+
+if (
+  !deliveryAddress.trim()
+) {
+
+  setTooltip({
+    show: true,
+    message:
+      'Delivery address is required',
+    type: 'error'
   });
 
-  const PROMO_CODES = { 'BOOKS10': 10, 'SALE20': 20, 'FIRST15': 15 };
+  setTimeout(() => {
 
-  const removeFromCart = (cartId) => {
-    setCart(prev => prev.filter(item => item.cartId !== cartId));
-    setQuantities(prev => { const n = { ...prev }; delete n[cartId]; return n; });
-  };
-
-  const changeQty = (cartId, delta) => {
-    setQuantities(prev => {
-      const next = (prev[cartId] || 1) + delta;
-      if (next < 1) return prev;
-      return { ...prev, [cartId]: next };
+    setTooltip({
+      show: false,
+      message: '',
+      type: 'success'
     });
-  };
 
-  const applyPromo = () => {
-    const code = promoCode.trim().toUpperCase();
-    if (PROMO_CODES[code]) {
-      setDiscount(PROMO_CODES[code]);
-      setPromoError('');
-    } else {
-      setPromoError('Невірний промокод');
-      setDiscount(0);
-    }
-  };
+  }, 3000);
 
-  const subtotal = cart.reduce((sum, item) => {
-    const price = parseFloat(item.price) || 0;
-    const qty = quantities[item.cartId] || 1;
-    return sum + price * qty;
-  }, 0);
+  return;
+}
 
-  const discountAmount = (subtotal * discount) / 100;
-  const delivery = subtotal > 500 ? 0 : 59;
-  const total = subtotal - discountAmount + delivery;
+  if (
+    !phoneNumber.trim()
+  ) {
 
-  const handleOrder = () => {
-    if (!user) { alert('Будь ласка, увійдіть щоб оформити замовлення'); return; }
-    setOrderPlaced(true);
-    setCart([]);
-  };
+    setTooltip({
+      show: true,
+      message:
+        'Phone number is required',
+      type: 'error'
+    });
 
-  if (orderPlaced) {
+    setTimeout(() => {
+
+      setTooltip({
+        show: false,
+        message: '',
+        type: 'success'
+      });
+
+    }, 3000);
+
+    return;
+  }
+
+      try {
+
+        await confirmReservation(
+          user.token
+        );
+
+        setBorrowSuccess(true);
+
+        setCart([]);
+
+      } catch (error) {
+
+        console.error(error);
+
+        setTooltip({
+          show: true,
+          message:
+            error.message,
+          type: 'error'
+        });
+
+        setTimeout(() => {
+
+          setTooltip({
+            show: false,
+            message: '',
+            type: 'success'
+          });
+
+        }, 3000);
+      }
+    };
+
+  if (loading) {
+
     return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
+
+  if (borrowSuccess) {
+
+    return (
+
       <div className="cart-page">
+
         <div className="cart-success-box">
-          <div className="cart-success-icon">🎉</div>
-          <h2 className="cart-success-title">Замовлення оформлено!</h2>
+
+          <div className="cart-success-icon">
+            📚
+          </div>
+
+          <h2 className="cart-success-title">
+            Reservation Confirmed
+          </h2>
+
           <p className="cart-success-text">
-            Дякуємо, <strong>{user?.name || user?.email}</strong>! Ваші книги вже в дорозі 📦
+
+            Thank you,
+            {' '}
+
+            <strong>
+              {user?.email}
+            </strong>
+
+            ! Your books were
+            successfully reserved.
+
           </p>
-          <button onClick={onBack} className="cart-back-btn">
-            ← Повернутись до магазину
+
+          <p className="cart-success-text">
+
+            Delivery address:
+            {' '}
+
+            <strong>
+              {deliveryAddress}
+            </strong>
+
+          </p>
+
+          <p className="cart-success-text">
+
+            Phone number:
+            {' '}
+
+            <strong>
+              {phoneNumber}
+            </strong>
+
+          </p>
+
+          <button
+            onClick={onBack}
+            className="cart-back-btn"
+          >
+            ← Return to Library
           </button>
+
         </div>
+
       </div>
     );
   }
 
   return (
+
     <div className="cart-page">
+
+      {tooltip.show && (
+
+        <div
+          className={
+            tooltip.type === 'success'
+              ? 'cart-tooltip success'
+              : 'cart-tooltip error'
+          }
+        >
+          {tooltip.message}
+        </div>
+      )}
+
       <div className="cart-header">
-        <button onClick={onBack} className="cart-back-link">← Магазин</button>
-        <h1 className="cart-title">🛒 Кошик</h1>
-        <span className="cart-item-count">{cart.length} книг</span>
+
+        <button
+          onClick={onBack}
+          className="cart-back-link"
+        >
+          ← Library
+        </button>
+
+        <h1 className="cart-title">
+          📚 Reserved Books
+        </h1>
+
+        <span className="cart-item-count">
+          {cart.length}
+          {' '}
+          books
+        </span>
+
       </div>
 
       {cart.length === 0 ? (
+
         <div className="cart-empty-box">
-          <div className="cart-empty-icon">📭</div>
-          <h3 className="cart-empty-title">Кошик порожній</h3>
-          <p className="cart-empty-text">Додайте книги, які вас зацікавили</p>
-          <button onClick={onBack} className="cart-back-btn">Перейти до магазину</button>
+
+          <div className="cart-empty-icon">
+            📭
+          </div>
+
+          <h3 className="cart-empty-title">
+            No Reserved Books
+          </h3>
+
+          <p className="cart-empty-text">
+            Add books from catalog
+            to reserve them
+          </p>
+
+          <button
+            onClick={onBack}
+            className="cart-back-btn"
+          >
+            Browse Catalog
+          </button>
+
         </div>
+
       ) : (
+
         <div className="cart-layout">
+
           <div className="cart-items-col">
+
             {cart.map(item => (
-              <div key={item.cartId} className="cart-card">
+
+              <div
+                key={item.id}
+                className="cart-card"
+              >
+
                 <div className="cart-cover-wrap">
-                  {item.coverImage ? (
-                    <img src={item.coverImage} alt={item.title} className="cart-cover" />
-                  ) : (
-                    <div className="cart-cover-placeholder">📖</div>
-                  )}
+
+                  <img
+                    src={
+                      item.imageUrl ||
+                      DefaultBookImage
+                    }
+                    alt={item.title}
+                    className="cart-cover"
+                  />
+
                 </div>
 
                 <div className="cart-info">
-                  <h3 className="cart-book-title">{item.title}</h3>
-                  <p className="cart-author">{item.author}</p>
-                  {item.genre && <span className="cart-genre">{item.genre}</span>}
-                  <div className="cart-price-row">
-                    <span className="cart-price">
-                      {parseFloat(item.price) ? `${item.price} ₴` : 'Ціна не вказана'}
-                    </span>
-                    {discount > 0 && parseFloat(item.price) && (
-                      <span className="cart-saved-badge">-{discount}%</span>
-                    )}
-                  </div>
+
+                  <h3 className="cart-book-title">
+                    {item.title}
+                  </h3>
+
+                  <p className="cart-author">
+                    {item.author}
+                  </p>
+
                 </div>
 
                 <div className="cart-controls">
-                  <div className="cart-qty-row">
-                    <button onClick={() => changeQty(item.cartId, -1)} className="cart-qty-btn">−</button>
-                    <span className="cart-qty-num">{quantities[item.cartId] || 1}</span>
-                    <button onClick={() => changeQty(item.cartId, +1)} className="cart-qty-btn">+</button>
-                  </div>
-                  <button onClick={() => removeFromCart(item.cartId)} className="cart-remove-btn">
-                    🗑 Видалити
+
+                  <button
+                    onClick={() =>
+                      removeFromCart(
+                        item.id
+                      )
+                    }
+                    className="cart-remove-btn"
+                  >
+                    Remove
                   </button>
+
                 </div>
+
               </div>
             ))}
+
           </div>
 
           <div className="cart-summary-col">
+
             <div className="cart-summary-box">
-              <h2 className="cart-summary-title">Підсумок</h2>
+
+              <h2 className="cart-summary-title">
+                Reservation Summary
+              </h2>
 
               <div className="cart-summary-row">
-                <span>Товари ({cart.length})</span>
-                <span>{subtotal.toFixed(2)} ₴</span>
-              </div>
 
-              {discount > 0 && (
-                <div className="cart-summary-row cart-summary-row--discount">
-                  <span>Знижка ({discount}%)</span>
-                  <span>−{discountAmount.toFixed(2)} ₴</span>
-                </div>
-              )}
-
-              <div className="cart-summary-row">
-                <span>Доставка</span>
                 <span>
-                  {delivery === 0
-                    ? <span className="cart-free-delivery">Безкоштовно</span>
-                    : `${delivery} ₴`}
+                  Reserved books
                 </span>
+
+                <span>
+                  {cart.length}
+                </span>
+
               </div>
 
               <div className="cart-divider" />
 
-              <div className="cart-total-row">
-                <span>Разом</span>
-                <span className="cart-total-price">{total.toFixed(2)} ₴</span>
+              <div className="cart-summary-row">
+
+                <span>
+                  Subscription status
+                </span>
+
+                <span>
+                  Active
+                </span>
+
               </div>
 
-              <div className="cart-promo-row">
+              <div className="cart-delivery-form">
+
                 <input
-                  className="cart-promo-input"
-                  placeholder="Промокод"
-                  value={promoCode}
-                  onChange={e => setPromoCode(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && applyPromo()}
+                  type="text"
+                  required
+                  placeholder="Delivery Address"
+                  value={deliveryAddress}
+                  onChange={e =>
+                    setDeliveryAddress(
+                      e.target.value
+                    )
+                  }
+                  className="cart-input"
                 />
-                <button onClick={applyPromo} className="cart-promo-btn">OK</button>
-              </div>
-              {promoError && <p className="cart-promo-error">{promoError}</p>}
-              {discount > 0 && <p className="cart-promo-success">✅ Знижку {discount}% застосовано!</p>}
 
-              <button onClick={handleOrder} className="cart-order-btn">
-                Оформити замовлення
+                <input
+                  type="text"
+                  required
+                  placeholder="Phone Number"
+                  value={phoneNumber}
+                  onChange={e =>
+                    setPhoneNumber(
+                      e.target.value
+                    )
+                  }
+                  className="cart-input"
+                />
+
+              </div>
+
+              <button
+                onClick={handleBorrow}
+                className="cart-order-btn"
+              >
+                Confirm Reservation
               </button>
 
-              {!user && (
-                <p className="cart-login-hint">⚠️ Увійдіть, щоб оформити замовлення</p>
-              )}
             </div>
+
           </div>
+
         </div>
       )}
+
     </div>
   );
 };

@@ -154,10 +154,10 @@ function SubscriptionPage({ user }) {
         <button
           className="skip-button"
           onClick={() =>
-            navigate('/shoppage')
+            navigate('/librarypage')
           }
         >
-          Go to Shop
+          Go to library
         </button>
 
       </div>
@@ -218,7 +218,7 @@ function SubscriptionPage({ user }) {
       <button
         className="skip-button"
         onClick={() =>
-          navigate('/shoppage')
+          navigate('/librarypage')
         }
       >
         Skip for now

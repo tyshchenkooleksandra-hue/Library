@@ -824,7 +824,7 @@ textarea {
   .cart-summary-col { flex: 1 1 100%; position: static; }
 }
 
-/* ===================== ADMIN + SHOP HEADER ===================== */
+/* ===================== ADMIN + library HEADER ===================== */
 
 .admin-page {
   min-height: 100vh;
@@ -904,7 +904,7 @@ textarea {
   padding: 32px 24px;
 }
 
-.shop-cart-count {
+.library-cart-count {
   background: #10b981;
   color: white;
   font-size: 11px;
@@ -1118,4 +1118,52 @@ textarea {
 
 .btn-info:active {
   transform: scale(0.96);
+}
+.cart-tooltip {
+  position: fixed;
+
+  top: 20px;
+  right: 20px;
+
+  padding: 16px 22px;
+
+  border-radius: 12px;
+
+  color: white;
+
+  z-index: 9999;
+
+  font-weight: 600;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.15);
+}
+
+.cart-tooltip.success {
+  background: #2ecc71;
+}
+
+.cart-tooltip.error {
+  background: #e74c3c;
+}
+
+.cart-delivery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.cart-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  outline: none;
+}
+
+.cart-input:focus {
+  border-color: #2ecc71;
 }

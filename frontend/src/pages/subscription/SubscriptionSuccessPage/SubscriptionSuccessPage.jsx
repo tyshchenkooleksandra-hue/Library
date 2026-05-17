@@ -20,9 +20,9 @@ function SubscriptionSuccessPage() {
         </p>
 
         <button
-          onClick={() => navigate('/shoppage')}
+          onClick={() => navigate('/librarypage')}
         >
-          Go to Shop
+          Go to library
         </button>
 
       </div>
