@@ -12,7 +12,7 @@ import {
 import AdminDashboard
   from './pages/admin/AdminDashboard';
 
-import ShopPage
+import LibraryPage
   from './pages/client/LibraryPage/LibraryPage';
 
 import CartPage
@@ -188,11 +188,11 @@ function App() {
       />
 
       <Route
-        path="/shoppage"
+        path="/librarypage"
         element={
           user
             ? (
-              <ShopPage
+              <LibraryPage
                 user={user}
                 cart={cart}
                 setCart={setCart}
@@ -221,7 +221,7 @@ function App() {
                 setCart={setCart}
                 user={user}
                 onBack={() =>
-                  navigate('/shoppage')
+                  navigate('/librarypage')
                 }
               />
             )

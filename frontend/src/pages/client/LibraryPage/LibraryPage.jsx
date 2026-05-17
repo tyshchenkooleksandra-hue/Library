@@ -10,12 +10,16 @@ import {
   getBooks
 } from '../../../services/bookService';
 
+import {
+  addToCart as addToCartRequest
+} from '../../../services/cartService';
+
 import DefaultBookImage
   from '../../../assets/default-book.jpg';
 
 import './LibraryPage.css';
 
-const ShopPage = ({
+const LibraryPage = ({
   user,
   cart,
   setCart,
@@ -34,6 +38,13 @@ const ShopPage = ({
 
   const [page, setPage] =
     useState(1);
+
+  const [tooltip, setTooltip] =
+    useState({
+      show: false,
+      message: '',
+      type: 'success'
+    });
 
   const limit = 6;
 
@@ -68,20 +79,51 @@ const ShopPage = ({
 
   }, [page]);
 
-  const addToCart = book => {
+  const addToCart =
+    async book => {
 
-    setCart(prev => [
-      ...prev,
-      {
-        ...book,
-        cartId: Date.now()
+      try {
+
+        await addToCartRequest(
+          user.token,
+          book.id
+        );
+
+        setCart(prev => [
+          ...prev,
+          {
+            ...book,
+            cartId: Date.now()
+          }
+        ]);
+
+        setTooltip({
+          show: true,
+          message:
+            `"${book.title}" added to cart`,
+          type: 'success'
+        });
+
+      } catch (error) {
+
+        setTooltip({
+          show: true,
+          message:
+            error.message,
+          type: 'error'
+        });
       }
-    ]);
 
-    alert(
-      `Book "${book.title}" added to cart!`
-    );
-  };
+      setTimeout(() => {
+
+        setTooltip({
+          show: false,
+          message: '',
+          type: 'success'
+        });
+
+      }, 3000);
+    };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -97,39 +139,38 @@ const ShopPage = ({
           📖 Library
         </span>
 
-      <div className="admin-header__tabs">
+        <div className="admin-header__tabs">
 
-        <button className="admin-tab admin-tab--active">
-          📚 Catalog
-        </button>
+          <button className="admin-tab admin-tab--active">
+            📚 Catalog
+          </button>
 
-        <button
-          onClick={() =>
-            navigate('/cart')
-          }
-          className="admin-tab"
-        >
-          🛒 Cart
+          <button
+            onClick={() =>
+              navigate('/cart')
+            }
+            className="admin-tab"
+          >
+            🛒 Cart
 
-          {cart.length > 0 && (
-            <span className="shop-cart-count">
-              {cart.length}
-            </span>
-          )}
+            {cart.length > 0 && (
+              <span className="library-cart-count">
+                {cart.length}
+              </span>
+            )}
 
-        </button>
+          </button>
 
-        <button
-          onClick={() =>
-            navigate('/subscription')
-          }
-          className="admin-tab"
-        >
-          ⭐ Subscription Plan
-        </button>
+          <button
+            onClick={() =>
+              navigate('/subscription')
+            }
+            className="admin-tab"
+          >
+            ⭐ Subscription Plan
+          </button>
 
-      </div>
-
+        </div>
 
         <div className="admin-header__right">
 
@@ -162,6 +203,19 @@ const ShopPage = ({
         </div>
 
       </div>
+
+      {tooltip.show && (
+
+        <div
+          className={
+            tooltip.type === 'success'
+              ? 'cart-tooltip success'
+              : 'cart-tooltip error'
+          }
+        >
+          {tooltip.message}
+        </div>
+      )}
 
       <div className="admin-body">
 
@@ -279,5 +333,5 @@ const ShopPage = ({
   );
 };
 
-export default ShopPage;
+export default LibraryPage;
 
