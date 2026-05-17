@@ -32,8 +32,7 @@ function LoginPage({ setUser }) {
 
     try {
 
-      const data =
-        await login(email, password);
+      const data = await login({email,password});
 
       const decodedToken =
         jwtDecode(data.accessToken);
