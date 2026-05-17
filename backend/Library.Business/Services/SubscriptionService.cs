@@ -194,7 +194,7 @@ public class SubscriptionService
 
     public async Task<
         ServiceResponse<
-            CurrentSubscriptionResponse>>
+            CurrentSubscriptionDto>>
         GetCurrentSubscriptionAsync(
             string userId)
     {
@@ -211,7 +211,7 @@ public class SubscriptionService
         if (subscription == null)
         {
             return new ServiceResponse<
-                CurrentSubscriptionResponse>
+                CurrentSubscriptionDto>
             {
                 Success = false,
 
@@ -221,7 +221,7 @@ public class SubscriptionService
         }
 
         return new ServiceResponse<
-            CurrentSubscriptionResponse>
+            CurrentSubscriptionDto>
         {
             Success = true,
 
@@ -229,7 +229,7 @@ public class SubscriptionService
                 "Current subscription retrieved successfully.",
 
             Data =
-                new CurrentSubscriptionResponse
+                new CurrentSubscriptionDto
                 {
                     Id =
                         subscription.Id,
@@ -268,13 +268,13 @@ public class SubscriptionService
 
     public async Task<
         ServiceResponse<
-            List<SubscriptionPlanResponse>>>
+            List<SubscriptionPlanDto>>>
         GetSubscriptionPlansAsync()
     {
         var plans =
             await _context.SubscriptionPlans
                 .Select(x =>
-                    new SubscriptionPlanResponse
+                    new SubscriptionPlanDto
                     {
                         Id = x.Id,
 
@@ -295,7 +295,7 @@ public class SubscriptionService
                 .ToListAsync();
 
         return new ServiceResponse<
-            List<SubscriptionPlanResponse>>
+            List<SubscriptionPlanDto>>
         {
             Success = true,
 

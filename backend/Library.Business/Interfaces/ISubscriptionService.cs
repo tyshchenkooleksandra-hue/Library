@@ -10,7 +10,7 @@ public interface ISubscriptionService
 
     Task<ServiceResponse<string>>ActivateSubscriptionAsync(string userId,int planId);
 
-    Task<ServiceResponse<CurrentSubscriptionResponse>> GetCurrentSubscriptionAsync(string userId);
+    Task<ServiceResponse<CurrentSubscriptionDto>> GetCurrentSubscriptionAsync(string userId);
 
-    Task<ServiceResponse<List<SubscriptionPlanResponse>>>GetSubscriptionPlansAsync();
+    Task<ServiceResponse<List<SubscriptionPlanDto>>>GetSubscriptionPlansAsync();
 }

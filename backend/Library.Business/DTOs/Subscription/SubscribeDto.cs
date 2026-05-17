@@ -1,6 +1,6 @@
 ﻿namespace Library.Business.DTOs.Subscription;
 
-public class SubscribeRequest
+public class SubscribeDto
 {
     public int PlanId { get; set; }
 }

@@ -13,7 +13,10 @@ import AdminDashboard
   from './pages/admin/AdminDashboard';
 
 import ShopPage
-  from './pages/client/ShopPage';
+  from './pages/client/ShopPage/LibraryPage';
+
+import CartPage
+  from './pages/client/CartPage';
 
 import LoginPage
   from './pages/auth/LoginPage';
@@ -209,6 +212,29 @@ function App() {
       />
 
       <Route
+        path="/cart"
+        element={
+          user
+            ? (
+              <CartPage
+                cart={cart}
+                setCart={setCart}
+                user={user}
+                onBack={() =>
+                  navigate('/shoppage')
+                }
+              />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
+
+      <Route
         path="/admindashboard"
         element={
           user?.role === 'admin'
@@ -234,4 +260,3 @@ function App() {
 }
 
 export default App;
-

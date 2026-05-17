@@ -57,6 +57,7 @@ function RegisterPage() {
 
   return (
     <div className="auth-page">
+      <h2>Реєстрація</h2>
 
       <h2>Register</h2>
 
