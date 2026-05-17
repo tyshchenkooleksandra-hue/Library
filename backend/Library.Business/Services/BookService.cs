@@ -3,6 +3,7 @@ using Library.Business.Interfaces;
 using Library.DataAccess.Context;
 using Library.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Library.Business.Services
 {
@@ -15,15 +16,23 @@ namespace Library.Business.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(int page, int limit)
+        public async Task<IEnumerable<BookDto>> GetAllBooksAsync( int page,int limit)
         {
             return await _context.Books
-                .Include(b => b.Genre)
-                .Include(b => b.BookCopies)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .Select(b => MapToDto(b))
-                .ToListAsync();
+                    .Include(b => b.Genre)
+                    .Include(b => b.BookCopies)
+
+                    .OrderByDescending(
+                        b => b.BookCopies.Any(
+                            bc => bc.Status == "Available"
+                        )
+                    )
+
+                    .Skip((page - 1) * limit)
+                    .Take(limit)
+
+                    .Select(b => MapToDto(b))
+                    .ToListAsync();
         }
 
         public async Task<BookDto?> GetBookByIdAsync(int id)

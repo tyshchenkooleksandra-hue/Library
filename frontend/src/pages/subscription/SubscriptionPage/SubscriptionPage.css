@@ -22,3 +22,29 @@
   background-color: #f3fff8;
 }
 
+.current-subscription-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  border: 2px solid #dcdcdc;
+  border-radius: 16px;
+
+  padding: 24px;
+
+  background: white;
+
+  width: 100%;
+  max-width: 500px;
+}
+
+.current-subscription-card h3 {
+  font-size: 32px;
+  margin: 0;
+}
+
+.current-subscription-card p {
+  margin: 0;
+  font-size: 18px;
+}
+

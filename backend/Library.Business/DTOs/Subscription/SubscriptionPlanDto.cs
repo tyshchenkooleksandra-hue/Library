@@ -1,6 +1,6 @@
 ﻿namespace Library.Business.DTOs.Subscription;
 
-public class SubscriptionPlanResponse
+public class SubscriptionPlanDto
 {
     public int Id { get; set; }
 

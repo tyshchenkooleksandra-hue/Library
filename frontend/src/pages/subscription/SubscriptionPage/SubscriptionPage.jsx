@@ -104,7 +104,7 @@ function SubscriptionPage({ user }) {
           Current Subscription
         </h2>
 
-        <div className="subscription-card">
+        <div className="current-subscription-card">
 
           <h3>
             {
@@ -177,7 +177,7 @@ function SubscriptionPage({ user }) {
 
           <div
             key={plan.id}
-            className="subscription-card"
+            className="current-subscription-card"
           >
 
             <h3>
