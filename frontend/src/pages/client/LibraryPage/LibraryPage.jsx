@@ -274,6 +274,17 @@ const LibraryPage = ({
               <div className="book-actions">
 
                 <button
+                  className="book-button book-button--preview"
+                  onClick={() =>
+                    navigate(
+                      `/books/${book.id}`
+                    )
+                  }
+                >
+                  👁 Preview
+                </button>
+
+                <button
                   className="book-button"
                   disabled={
                     !book.isAvailable
@@ -334,4 +345,3 @@ const LibraryPage = ({
 };
 
 export default LibraryPage;
-
