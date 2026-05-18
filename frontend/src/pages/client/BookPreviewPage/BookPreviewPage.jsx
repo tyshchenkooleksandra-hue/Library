@@ -11,10 +11,6 @@ import {
 import DefaultBookImage
   from "../../../assets/default-book.jpg";
 
-import {
-  addToCart as addToCartRequest
-} from "../../../services/cartService";
-
 import AddToCartButton
   from '../../../components/cart/AddToCartButton';
 
@@ -37,12 +33,6 @@ const BookPreviewPage = ({
   const [loading, setLoading] =
     useState(true);
 
-  const [tooltip, setTooltip] =
-    useState({
-      show: false,
-      message: "",
-      type: "success"
-    });
 
   useEffect(() => {
 
@@ -119,20 +109,6 @@ const BookPreviewPage = ({
   return (
 
     <div className="preview-page">
-
-      {tooltip.show && (
-
-        <div
-          className={
-            tooltip.type === "success"
-              ? "cart-tooltip success"
-              : "cart-tooltip error"
-          }
-        >
-          {tooltip.message}
-        </div>
-      )}
-
       <div className="preview-header">
 
         <button
