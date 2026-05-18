@@ -1167,3 +1167,27 @@ textarea {
 .cart-input:focus {
   border-color: #2ecc71;
 }
+
+.preview-actions {
+  margin-top: 32px;
+}
+
+.book-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.book-button:hover {
+  opacity: 0.9;
+}
+
+.book-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}

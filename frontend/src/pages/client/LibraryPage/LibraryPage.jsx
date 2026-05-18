@@ -17,6 +17,9 @@ import {
 import DefaultBookImage
   from '../../../assets/default-book.jpg';
 
+import AddToCartButton
+  from '../../../components/cart/AddToCartButton';
+
 import './LibraryPage.css';
 
 const LibraryPage = ({
@@ -284,17 +287,10 @@ const LibraryPage = ({
                   👁 Preview
                 </button>
 
-                <button
-                  className="book-button"
-                  disabled={
-                    !book.isAvailable
-                  }
-                  onClick={() =>
-                    addToCart(book)
-                  }
-                >
-                  Add to Cart
-                </button>
+                <AddToCartButton
+                  book={book}
+                  onAddToCart={addToCart}
+                />
 
               </div>
 
