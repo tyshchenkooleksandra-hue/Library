@@ -10,10 +10,6 @@ import {
   getBooks
 } from '../../../services/bookService';
 
-import {
-  addToCart as addToCartRequest
-} from '../../../services/cartService';
-
 import DefaultBookImage
   from '../../../assets/default-book.jpg';
 
