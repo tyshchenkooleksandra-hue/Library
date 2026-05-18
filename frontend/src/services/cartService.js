@@ -1,69 +1,47 @@
-const API_URL =
-  process.env.REACT_APP_API_URL;
+import apiClient
+  from "../api/apiClient";
 
 export async function addToCart(
-  token,
   bookId
 ) {
 
-  const response =
-    await fetch(
-      `${API_URL}/api/cart/add`,
-      {
-        method: 'POST',
+  try {
 
-        headers: {
-          'Content-Type':
-            'application/json',
-
-          Authorization:
-            `Bearer ${token}`
-        },
-
-        body: JSON.stringify({
+    const response =
+      await apiClient.post(
+        "/api/cart/add",
+        {
           bookId
-        })
-      }
-    );
+        }
+      );
 
-  const data =
-    await response.json();
+    return response.data;
 
-  if (!response.ok) {
+  } catch (error) {
 
     throw new Error(
-      data.message ||
-      'Failed to add book'
+      error.response?.data?.message ||
+      "Failed to add book"
     );
   }
-
-  return data;
 }
 
-export async function getCart(
-  token
-) {
+export async function getCart() {
 
-  const response =
-    await fetch(
-      `${API_URL}/api/cart`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`
-        }
-      }
-    );
+  try {
 
-  const data =
-    await response.json();
+    const response =
+      await apiClient.get(
+        "/api/cart"
+      );
 
-  if (!response.ok) {
+    return response.data.data;
+
+  } catch (error) {
 
     throw new Error(
-      'Failed to load cart'
+      error.response?.data?.message ||
+      "Failed to load cart"
     );
   }
-
-  return data.data;
 }

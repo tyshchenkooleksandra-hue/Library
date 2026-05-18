@@ -1,33 +1,22 @@
-const API_URL =
-  process.env.REACT_APP_API_URL;
+import apiClient
+  from "../api/apiClient";
 
-export async function confirmReservation(
-  token
-) {
+export async function confirmReservation() {
 
-  const response =
-    await fetch(
-      `${API_URL}/api/reservation/confirm`,
-      {
-        method: 'POST',
+  try {
 
-        headers: {
-          Authorization:
-            `Bearer ${token}`
-        }
-      }
-    );
+    const response =
+      await apiClient.post(
+        "/api/reservation/confirm"
+      );
 
-  const data =
-    await response.json();
+    return response.data;
 
-  if (!response.ok) {
+  } catch (error) {
 
     throw new Error(
-      data.message ||
-      'Reservation failed'
+      error.response?.data?.message ||
+      "Reservation failed"
     );
   }
-
-  return data;
 }

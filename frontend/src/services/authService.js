@@ -1,78 +1,49 @@
-const API_URL =
-  process.env.REACT_APP_API_URL;
+import apiClient
+  from "../api/apiClient";
 
 export async function register(data) {
 
-  const response =
-    await fetch(
-      `${API_URL}/api/auth/register`,
-      {
-        method: 'POST',
+  try {
 
-        headers: {
-          'Content-Type':
-            'application/json'
-        },
-
-        body: JSON.stringify(data)
-      }
-    );
-
-  if (!response.ok) {
-
-    let errorData = null;
-
-    try {
-
-      errorData =
-        await response.json();
-
-    } catch {
-
-      errorData = null;
-    }
-
-    const error =
-      new Error(
-        'Registration failed'
+    const response =
+      await apiClient.post(
+        "/api/auth/register",
+        data
       );
 
-    error.data =
-      errorData;
+    return response.data;
 
-    throw error;
+  } catch (error) {
+
+    const customError =
+      new Error(
+        "Registration failed"
+      );
+
+    customError.data =
+      error.response?.data;
+
+    throw customError;
   }
-
-  return await response.json();
 }
 
 export async function login(data) {
 
-  const response =
-    await fetch(
-      `${API_URL}/api/auth/login`,
-      {
-        method: 'POST',
+  try {
 
-        headers: {
-          'Content-Type':
-            'application/json'
-        },
+    const response =
+      await apiClient.post(
+        "/api/auth/login",
+        data
+      );
 
-        body: JSON.stringify(data)
-      }
-    );
+    return response.data;
 
-  const result =
-    await response.json();
-
-  if (!response.ok) {
+  } catch (error) {
 
     throw new Error(
-      result.message ||
-      'Login failed'
+      error.response?.data?.message ||
+      "Login failed"
     );
   }
-
-  return result;
 }
