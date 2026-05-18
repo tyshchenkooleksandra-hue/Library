@@ -42,12 +42,6 @@ const LibraryPage = ({
   const [page, setPage] =
     useState(1);
 
-  const [tooltip, setTooltip] =
-    useState({
-      show: false,
-      message: '',
-      type: 'success'
-    });
 
   const limit = 6;
 
@@ -82,52 +76,7 @@ const LibraryPage = ({
 
   }, [page]);
 
-  const addToCart =
-    async book => {
-
-      try {
-
-        await addToCartRequest(
-          user.token,
-          book.id
-        );
-
-        setCart(prev => [
-          ...prev,
-          {
-            ...book,
-            cartId: Date.now()
-          }
-        ]);
-
-        setTooltip({
-          show: true,
-          message:
-            `"${book.title}" added to cart`,
-          type: 'success'
-        });
-
-      } catch (error) {
-
-        setTooltip({
-          show: true,
-          message:
-            error.message,
-          type: 'error'
-        });
-      }
-
-      setTimeout(() => {
-
-        setTooltip({
-          show: false,
-          message: '',
-          type: 'success'
-        });
-
-      }, 3000);
-    };
-
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -207,18 +156,6 @@ const LibraryPage = ({
 
       </div>
 
-      {tooltip.show && (
-
-        <div
-          className={
-            tooltip.type === 'success'
-              ? 'cart-tooltip success'
-              : 'cart-tooltip error'
-          }
-        >
-          {tooltip.message}
-        </div>
-      )}
 
       <div className="admin-body">
 
@@ -289,7 +226,6 @@ const LibraryPage = ({
 
                 <AddToCartButton
                   book={book}
-                  onAddToCart={addToCart}
                 />
 
               </div>

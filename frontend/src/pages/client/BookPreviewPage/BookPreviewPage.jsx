@@ -81,51 +81,6 @@ const BookPreviewPage = ({
 
   }, [id]);
 
-  const addToCart =
-    async book => {
-
-      try {
-
-        await addToCartRequest(
-          user.token,
-          book.id
-        );
-
-        setCart(prev => [
-          ...prev,
-          {
-            ...book,
-            cartId: Date.now()
-          }
-        ]);
-
-        setTooltip({
-          show: true,
-          message:
-            `"${book.title}" added to cart`,
-          type: "success"
-        });
-
-      } catch (error) {
-
-        setTooltip({
-          show: true,
-          message:
-            error.message,
-          type: "error"
-        });
-      }
-
-      setTimeout(() => {
-
-        setTooltip({
-          show: false,
-          message: "",
-          type: "success"
-        });
-
-      }, 3000);
-    };
 
   if (loading) {
 
@@ -284,7 +239,6 @@ const BookPreviewPage = ({
 
             <AddToCartButton
               book={book}
-              onAddToCart={addToCart}
             />
 
           </div>
