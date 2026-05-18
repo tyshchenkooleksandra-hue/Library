@@ -17,6 +17,9 @@ import {
 import DefaultBookImage
   from '../../../assets/default-book.jpg';
 
+import AddToCartButton
+  from '../../../components/cart/AddToCartButton';
+
 import './LibraryPage.css';
 
 const LibraryPage = ({
@@ -274,16 +277,20 @@ const LibraryPage = ({
               <div className="book-actions">
 
                 <button
-                  className="book-button"
-                  disabled={
-                    !book.isAvailable
-                  }
+                  className="book-button book-button--preview"
                   onClick={() =>
-                    addToCart(book)
+                    navigate(
+                      `/books/${book.id}`
+                    )
                   }
                 >
-                  Add to Cart
+                  👁 Preview
                 </button>
+
+                <AddToCartButton
+                  book={book}
+                  onAddToCart={addToCart}
+                />
 
               </div>
 
@@ -334,4 +341,3 @@ const LibraryPage = ({
 };
 
 export default LibraryPage;
-
