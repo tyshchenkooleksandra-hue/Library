@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import BookPreviewPage from './pages/client/BookPreviewPage/BookPreviewPage';
 import './App.css';
 
 import {
@@ -235,6 +235,22 @@ function App() {
       />
 
       <Route
+        path="/books/:id"
+        element={
+          user
+            ? (
+              <BookPreviewPage />
+            )
+            : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+        }
+      />
+
+      <Route
         path="/admindashboard"
         element={
           user?.role === 'admin'
@@ -256,6 +272,8 @@ function App() {
       />
 
     </Routes>
+
+    
   );
 }
 

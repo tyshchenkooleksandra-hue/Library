@@ -101,3 +101,13 @@
   font-size: 12px;
   font-weight: bold;
 }
+.book-button--preview {
+  background-color: transparent;
+  border: 2px solid #4ade80;
+  color: #4ade80;
+}
+
+.book-button--preview:hover {
+  background-color: #4ade80;
+  color: #fff;
+}
