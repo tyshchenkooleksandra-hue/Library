@@ -37,9 +37,7 @@ function SubscriptionPage({ user }) {
       try {
 
         const subscription =
-          await getCurrentSubscription(
-            user.token
-          );
+          await getCurrentSubscription();
 
         if (subscription) {
 
@@ -78,7 +76,6 @@ function SubscriptionPage({ user }) {
 
         const response =
           await createCheckoutSession(
-            user.token,
             planId
           );
 

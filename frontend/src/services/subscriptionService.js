@@ -1,87 +1,76 @@
-const API_URL =
-  process.env.REACT_APP_API_URL;
+import apiClient
+  from "../api/apiClient";
 
 export async function
-  getCurrentSubscription(token)
+  getCurrentSubscription()
 {
-  const response =
-    await fetch(
-      `${API_URL}/api/subscription/current`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`
-        }
-      }
-    );
+  try {
 
-  if (response.status === 404) {
-    return null;
-  }
+    const response =
+      await apiClient.get(
+        "/api/subscription/current"
+      );
 
-  if (!response.ok) {
+    return response.data.data;
+
+  } catch (error) {
+
+    if (
+      error.response?.status === 404
+    ) {
+      return null;
+    }
+
     throw new Error(
-      'Failed to fetch current subscription.'
+      error.response?.data?.message ||
+      "Failed to fetch current subscription."
     );
   }
-
-  const data =
-    await response.json();
-
-  return data.data;
 }
 
 export async function
   createCheckoutSession(
-    token,
     planId
   )
 {
-  const response =
-    await fetch(
-      `${API_URL}/api/subscription/create-checkout-session`,
-      {
-        method: 'POST',
+  try {
 
-        headers: {
-          'Content-Type':
-            'application/json',
-
-          Authorization:
-            `Bearer ${token}`
-        },
-
-        body: JSON.stringify({
+    const response =
+      await apiClient.post(
+        "/api/subscription/create-checkout-session",
+        {
           planId
-        })
-      }
-    );
+        }
+      );
 
-  if (!response.ok) {
+    return response.data;
+
+  } catch (error) {
+
     throw new Error(
-      'Failed to create checkout session.'
+      error.response?.data?.message ||
+      "Failed to create checkout session."
     );
   }
-
-  return await response.json();
 }
 
 export async function
   getSubscriptionPlans()
 {
-  const response =
-    await fetch(
-      `${API_URL}/api/subscription/plans`
-    );
+  try {
 
-  if (!response.ok) {
+    const response =
+      await apiClient.get(
+        "/api/subscription/plans"
+      );
+
+    return response.data.data;
+
+  } catch (error) {
+
     throw new Error(
-      'Failed to fetch subscription plans.'
+      error.response?.data?.message ||
+      "Failed to fetch subscription plans."
     );
   }
-
-  const data =
-    await response.json();
-
-  return data.data;
 }

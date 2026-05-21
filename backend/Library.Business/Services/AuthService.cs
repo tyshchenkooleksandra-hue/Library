@@ -96,8 +96,7 @@ namespace Library.Business.Services
                 };
             }
 
-            var userRoles =
-                await _userManager.GetRolesAsync(user);
+            var userRoles =  await _userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
             {

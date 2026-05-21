@@ -10,12 +10,11 @@ import {
   getBooks
 } from '../../../services/bookService';
 
-import {
-  addToCart as addToCartRequest
-} from '../../../services/cartService';
-
 import DefaultBookImage
   from '../../../assets/default-book.jpg';
+
+import AddToCartButton
+  from '../../../components/cart/AddToCartButton';
 
 import './LibraryPage.css';
 
@@ -39,12 +38,6 @@ const LibraryPage = ({
   const [page, setPage] =
     useState(1);
 
-  const [tooltip, setTooltip] =
-    useState({
-      show: false,
-      message: '',
-      type: 'success'
-    });
 
   const limit = 6;
 
@@ -79,52 +72,7 @@ const LibraryPage = ({
 
   }, [page]);
 
-  const addToCart =
-    async book => {
-
-      try {
-
-        await addToCartRequest(
-          user.token,
-          book.id
-        );
-
-        setCart(prev => [
-          ...prev,
-          {
-            ...book,
-            cartId: Date.now()
-          }
-        ]);
-
-        setTooltip({
-          show: true,
-          message:
-            `"${book.title}" added to cart`,
-          type: 'success'
-        });
-
-      } catch (error) {
-
-        setTooltip({
-          show: true,
-          message:
-            error.message,
-          type: 'error'
-        });
-      }
-
-      setTimeout(() => {
-
-        setTooltip({
-          show: false,
-          message: '',
-          type: 'success'
-        });
-
-      }, 3000);
-    };
-
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -204,18 +152,6 @@ const LibraryPage = ({
 
       </div>
 
-      {tooltip.show && (
-
-        <div
-          className={
-            tooltip.type === 'success'
-              ? 'cart-tooltip success'
-              : 'cart-tooltip error'
-          }
-        >
-          {tooltip.message}
-        </div>
-      )}
 
       <div className="admin-body">
 
@@ -274,16 +210,19 @@ const LibraryPage = ({
               <div className="book-actions">
 
                 <button
-                  className="book-button"
-                  disabled={
-                    !book.isAvailable
-                  }
+                  className="book-button book-button--preview"
                   onClick={() =>
-                    addToCart(book)
+                    navigate(
+                      `/books/${book.id}`
+                    )
                   }
                 >
-                  Add to Cart
+                  👁 Preview
                 </button>
+
+                <AddToCartButton
+                  book={book}
+                />
 
               </div>
 
@@ -334,4 +273,3 @@ const LibraryPage = ({
 };
 
 export default LibraryPage;
-

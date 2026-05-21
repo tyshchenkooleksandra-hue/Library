@@ -1,4 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect }
+  from 'react';
+
+import BookPreviewPage
+  from './pages/client/BookPreviewPage/BookPreviewPage';
 
 import './App.css';
 
@@ -38,7 +42,8 @@ import SubscriptionSuccessPage
 
 function App() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [user, setUser] =
     useState(null);
@@ -69,6 +74,8 @@ function App() {
 
     localStorage.removeItem('user');
 
+    localStorage.removeItem('token');
+
     setUser(null);
 
     navigate('/login');
@@ -77,6 +84,14 @@ function App() {
   if (loading) {
     return null;
   }
+
+  const isAdmin =
+    user?.role === "Admin";
+
+  const userEmail =
+    user?.[
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+    ];
 
   return (
 
@@ -87,10 +102,19 @@ function App() {
         element={
           user
             ? (
-              <Navigate
-                to="/subscription"
-                replace
-              />
+              isAdmin
+                ? (
+                  <Navigate
+                    to="/admindashboard"
+                    replace
+                  />
+                )
+                : (
+                  <Navigate
+                    to="/librarypage"
+                    replace
+                  />
+                )
             )
             : (
               <Navigate
@@ -106,10 +130,19 @@ function App() {
         element={
           user
             ? (
-              <Navigate
-                to="/subscription"
-                replace
-              />
+              isAdmin
+                ? (
+                  <Navigate
+                    to="/admindashboard"
+                    replace
+                  />
+                )
+                : (
+                  <Navigate
+                    to="/librarypage"
+                    replace
+                  />
+                )
             )
             : (
               <LoginPage
@@ -124,10 +157,19 @@ function App() {
         element={
           user
             ? (
-              <Navigate
-                to="/subscription"
-                replace
-              />
+              isAdmin
+                ? (
+                  <Navigate
+                    to="/admindashboard"
+                    replace
+                  />
+                )
+                : (
+                  <Navigate
+                    to="/librarypage"
+                    replace
+                  />
+                )
             )
             : (
               <RegisterPage
@@ -156,99 +198,72 @@ function App() {
       <Route
         path="/subscription"
         element={
-          user
-            ? (
-              <SubscriptionPage
-                user={user}
-              />
-            )
-            : (
-              <Navigate
-                to="/login"
-                replace
-              />
-            )
+          <SubscriptionPage
+            user={user}
+          />
         }
       />
 
       <Route
         path="/subscription-success"
         element={
-          user
-            ? (
-              <SubscriptionSuccessPage />
-            )
-            : (
-              <Navigate
-                to="/login"
-                replace
-              />
-            )
+          <SubscriptionSuccessPage />
         }
       />
 
       <Route
         path="/librarypage"
         element={
-          user
-            ? (
-              <LibraryPage
-                user={user}
-                cart={cart}
-                setCart={setCart}
-                onLogout={handleLogout}
-                onOpenLogin={() =>
-                  navigate('/login')
-                }
-              />
-            )
-            : (
-              <Navigate
-                to="/login"
-                replace
-              />
-            )
+          <LibraryPage
+            user={user}
+            cart={cart}
+            setCart={setCart}
+            onLogout={handleLogout}
+            onOpenLogin={() =>
+              navigate('/login')
+            }
+          />
         }
       />
 
       <Route
         path="/cart"
         element={
-          user
-            ? (
-              <CartPage
-                cart={cart}
-                setCart={setCart}
-                user={user}
-                onBack={() =>
-                  navigate('/librarypage')
-                }
-              />
-            )
-            : (
-              <Navigate
-                to="/login"
-                replace
-              />
-            )
+          <CartPage
+            cart={cart}
+            setCart={setCart}
+            user={user}
+            onBack={() =>
+              navigate('/librarypage')
+            }
+          />
+        }
+      />
+
+      <Route
+        path="/books/:id"
+        element={
+          <BookPreviewPage
+            user={user}
+            cart={cart}
+            setCart={setCart}
+          />
         }
       />
 
       <Route
         path="/admindashboard"
         element={
-          user?.role === 'admin'
+          isAdmin
             ? (
               <AdminDashboard
-                email={user?.email}
-                onLogout={
-                  handleLogout
-                }
+                email={userEmail}
+                onLogout={handleLogout}
               />
             )
             : (
               <Navigate
-                to="/login"
+                to="/librarypage"
                 replace
               />
             )
